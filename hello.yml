@@ -54,32 +54,33 @@
   hosts: loadbalancer
   tasks:
     - name: Ensure Nginx is installed and it is the latest version
-      apt:
-        name: nginx
-        state: latest
-        become: yes
-   
+      command: apk --no-cache add nginx
+
+    # VVVV EORROR HERE VVVV
+
+    - name: Start Nginx if not already running
+      shell: systemctl is-active nginx
+      register: nginx_status
+      ignore_errors: true
+
     - name: Start Nginx
       service:
         name: nginx
         state: started
-      become: yes
+      when: nginx_status.rc != 0
     
     - name: Copy the Nginx config file and restart nginx
       copy:
         src: ./nginx.cfg
         dest: /etc/nginx/sites-available/nginx.cfg
-      become: yes
      
     - name: Create symlink
       file:
         src: /etc/nginx/sites-available/nginx.cfg
         dest: /etc/nginx/sites-enabled/default
         state: link
-      become: yes
 
     - name: Restart nginx
       service:
         name: nginx
         state: restarted
-      become: yes
