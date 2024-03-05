@@ -59,16 +59,12 @@
     # VVVV EORROR HERE VVVV
 
     - name: Start Nginx if not already running
-      shell: systemctl is-active nginx
-      register: nginx_status
-      ignore_errors: true
-
-    - name: Start Nginx
       service:
         name: nginx
         state: started
-      when: nginx_status.rc != 0
-    
+      ignore_errors: true
+      register: nginx_status
+
     - name: Copy the Nginx config file and restart nginx
       copy:
         src: ./nginx.cfg
