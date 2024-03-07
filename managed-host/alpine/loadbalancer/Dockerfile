@@ -20,16 +20,11 @@ RUN apk update && \
 # Expose the port that nginx will listen on
 EXPOSE 80
 
-# COPY docker-entrypoint.sh /entry.sh
-# RUN chmod a+x /entry.sh
-# ENTRYPOINT ["/entry.sh"]
-
-# # Install nginx
-# RUN apk --no-cache add nginx
-
 # Copy config files in
 COPY nginx.conf nginx.conf
 
+COPY docker-entrypoint.sh /entry.sh
+RUN chmod a+x /entry.sh
+ENTRYPOINT ["/entry.sh"]
+
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config"]
-# Comand to start nginx
-# CMD ["nginx", "-g", "deamon off;"]

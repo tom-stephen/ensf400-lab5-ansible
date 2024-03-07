@@ -37,7 +37,7 @@ services:
       - "2225:2225"
     volumes:
       - ./secrets/id_rsa_container.pub:/root/.ssh/authorized_keys
-  nginx:
+  loadbalancer:
     build: 
       context: managed-host/alpine/loadbalancer
     restart: unless-stopped
