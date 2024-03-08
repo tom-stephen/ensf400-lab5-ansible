@@ -6,11 +6,19 @@ class Color:
     MAGENTA = '\033[95m'
     CYAN = '\033[96m'
     RESET = '\033[0m'
-
+class TextStyle:
+    BOLD = '\033[1m'
+    RESET = '\033[0m'
 # load the inventory 
 from ansible.inventory.manager import InventoryManager
 from ansible.parsing.dataloader import DataLoader
 import pprint
+import os
+import subprocess
+
+# Set the ANSIBLE_CONFIG environment variable
+ansible_config_path = os.path.abspath('ansible.cfg')
+os.environ['ANSIBLE_CONFIG'] = ansible_config_path
 
 dl = DataLoader()
 im = InventoryManager(loader=dl, sources=['hosts.yml'])
@@ -30,11 +38,8 @@ for host in all_hosts:
     pp = pprint.PrettyPrinter(indent=2)
     pp.pprint(info.vars)
 
-# Ping the host 
-import os
-import subprocess
 
-print("\nPinging Hosts")
+print(f"\n{TextStyle.BOLD}Pinging Hosts{TextStyle.RESET}")
 
 # Set the ANSIBLE_CONFIG environment variable
 ansible_config_path = os.path.abspath('ansible.cfg')
@@ -46,7 +51,6 @@ ansible_command = ['ansible', '-i', 'hosts.yml', '-m', 'ping', 'all']
 # Run the command
 try:
     result = subprocess.run(ansible_command, check=True, text=True, capture_output=True)
-    print("Command output:")
     print(f"{Color.GREEN}{result.stdout}{Color.RESET}")
 except subprocess.CalledProcessError as e:
     print(f"{Color.RED}Error: {e}")
