@@ -21,7 +21,7 @@ RUN apk update && \
 EXPOSE 80
 
 # Copy config files in
-COPY nginx.conf nginx.conf
+COPY nginx.cfg nginx.cfg
 
 COPY docker-entrypoint.sh /entry.sh
 RUN chmod a+x /entry.sh

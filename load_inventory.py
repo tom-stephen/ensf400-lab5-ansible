@@ -26,7 +26,9 @@ im = InventoryManager(loader=dl, sources=['hosts.yml'])
 # Use list_groups_dict() to get a dictionary of groups and their hosts
 groups_dict = im.get_groups_dict()
 groups = groups_dict.keys()
-print("Groups: ", groups)
+pp = pprint.PrettyPrinter(indent=2)
+print(f"{Color.GREEN}groups:{Color.RESET}")
+pp.pprint(groups_dict)
 
 # Access specific group, e.g., 'app_group'
 all_hosts = groups_dict.get('all', [])
