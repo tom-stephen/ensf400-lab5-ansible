@@ -53,7 +53,7 @@
 
 # Uninstall Nginx
 # - name: Play - Uninstall Nginx
-#   hosts: loadbalancer
+#   hosts: localhost
 #   become: yes
 #   tasks: 
 #     - name: Unnstall Nginx
@@ -61,7 +61,7 @@
 
 # Third Play
 - name: Play - Install and configure Nginx
-  hosts: loadbalancer
+  hosts: localhost
   become: yes
   tasks:
     - name: Update cache
