@@ -50,75 +50,37 @@
     command: forever start /node-app/app.js
     when: "forever_list.stdout.find('/node-app/app.js') == -1"
 
-# Third play
-# - name: Play - install nginx on loadbalancer
+
+# Uninstall Nginx
+# - name: Play - Uninstall Nginx
 #   hosts: loadbalancer
 #   become: yes
-#   tasks:
-#     - name: Debug Host Information
-#       debug:
-#         var: inventory_hostname
+#   tasks: 
+#     - name: Unnstall Nginx
+#       apt: name=nginx state=absent
 
-#     - name: Ensure Nginx is installed and it is the latest version
-#       shell: apk --no-cache add nginx
-    
-#     - name: Copy config file into nginx directory
-#       shell: ls 
-#       register: ls_output
-    
-#     - name: ls Output
-#       debug:
-#         var: ls_output.stdout_lines
-
-#     - name: Debugging information
-#       debug:
-#         msg:
-#           - "Current working directory: {{ ansible_env.PWD }}"
-#           - "Contents of the directory: {{ lookup('fileglob', './') }}"
-
-#     - name: Copy config file into nginx directory
-#       command:
-#         cmd: "mv /nginx.cfg /etc/nginx/nginx.cfg"
-#         chdir: "/"
-#       ignore_errors: yes
-
-#     - name: Restart Nginx
-#       command: nginx -s reload
-
-- name: Play - Install and configure Nginx as a LoadBalancer
+# Third Play
+- name: Play - Install and configure Nginx
   hosts: loadbalancer
   become: yes
   tasks:
     - name: Update cache
-      apk: update_cache=yes
-
+      apt: update_cache=yes  
     - name: Install Nginx
-      apk:
-        name: nginx
-        state: latest
-
-    - name: Copy the Nginx config file to /etc/nginx/sites-available
+      apt: name=nginx state=latest
+    - name: Copy the Nginx config file and restart nginx
       copy:
         src: ./nginx.cfg
-        dest: /etc/nginx/sites-available/
-
-    - name: Check if sites-enabled directory exists
-      stat:
-        path: /etc/nginx/sites-enabled/
-      register: sites_enabled_dir
-
-    - name: Make sites-enabled directory if it doesn't exist
-      command: mkdir /etc/nginx/sites-enabled/
-      when: not sites_enabled_dir.stat.exists
-
-    - name: Create symlink of the config file at /etc/nginx/sites-enabled
+        dest: /etc/nginx/sites-available/nginx.cfg
+      become: yes
+    - name: Create symlink
       file:
         src: /etc/nginx/sites-available/nginx.cfg
-        dest: /etc/nginx/sites-enabled/nginx.cfg
+        dest: /etc/nginx/sites-enabled/default
         state: link
-
-    - name: Restart nginx to apply changes
-      command: nginx -s reload
-      # service:
-      #   name: nginx
-      #   state: restarted
+      become: yes
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+      become: yes
