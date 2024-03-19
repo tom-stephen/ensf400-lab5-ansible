@@ -57,7 +57,19 @@ try:
 except subprocess.CalledProcessError as e:
     print(f"{Color.RED}Error: {e}")
     print("Command output:")
-    print(f"{e.output}{Color.RESET}")
+    # print(f"{e.output}{Color.RESET}")
+    output_lines = e.output.split('\n')
+    count = 0
+    fail = False
+    for line in output_lines:
+        if "UNREACHABLE" in line or fail:
+            print(f"{Color.RED}{line}{Color.RESET}")
+            fail = True
+            count += 1
+            if count > 4:
+                fail = False
+        else:
+            print(f"{Color.GREEN}{line}{Color.RESET}")
 
 
 ## VVVV this does not work VVV
